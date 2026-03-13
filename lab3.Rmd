@@ -20,6 +20,154 @@ load("listings.RData")
 head(listings)
 ```
 
+##Variables
+```{r}
+load("listings.RData")
+summary(listings)
+```
+
+```{r}
+load("listings.RData")
+str(listings)
+```
+El conjunto de datos contiene 171,748 observaciones de alojamientos publicados en Airbnb y 80 variables que describen características del listado, del anfitrión, de la propiedad, disponibilidad, reseñas y desempeño del alojamiento. Estas variables permiten analizar los factores que influyen en el precio y la ocupación de las propiedades.
+
+## Descripción de Variables
+
+### Variables de Identificación del Listado
+
+- **id:** Identificador único del alojamiento dentro de la plataforma Airbnb.
+- **listing_url:** URL del anuncio del alojamiento en la plataforma Airbnb.
+- **scrape_id:** Identificador del proceso de extracción de datos utilizado para generar el dataset.
+- **last_scraped:** Fecha en la que el registro fue extraído de la plataforma.
+- **source:** Fuente del proceso de recolección de datos.
+
+---
+
+### Información General del Alojamiento
+
+- **name:** Nombre del alojamiento publicado en Airbnb.
+- **description:** Descripción del alojamiento proporcionada por el anfitrión.
+- **neighborhood_overview:** Descripción del vecindario donde se encuentra la propiedad.
+- **picture_url:** URL de la imagen principal del alojamiento.
+
+---
+
+### Información del Anfitrión
+
+- **host_id:** Identificador único del anfitrión.
+- **host_url:** URL del perfil del anfitrión en Airbnb.
+- **host_name:** Nombre del anfitrión.
+- **host_since:** Fecha en la que el anfitrión se registró en Airbnb.
+- **host_location:** Ubicación declarada por el anfitrión.
+- **host_about:** Descripción del anfitrión.
+- **host_response_time:** Tiempo promedio que tarda el anfitrión en responder consultas.
+- **host_response_rate:** Porcentaje de mensajes respondidos por el anfitrión.
+- **host_acceptance_rate:** Porcentaje de solicitudes de reserva aceptadas.
+- **host_is_superhost:** Indica si el anfitrión tiene la categoría de “Superhost”.
+- **host_thumbnail_url:** URL de la imagen pequeña del perfil del anfitrión.
+- **host_picture_url:** URL de la imagen del perfil del anfitrión.
+- **host_neighbourhood:** Vecindario donde se encuentra el anfitrión.
+- **host_listings_count:** Número de propiedades activas que el anfitrión tiene listadas.
+- **host_total_listings_count:** Número total de propiedades registradas por el anfitrión.
+- **host_verifications:** Métodos mediante los cuales el anfitrión ha verificado su cuenta.
+- **host_has_profile_pic:** Indica si el anfitrión tiene una foto de perfil.
+- **host_identity_verified:** Indica si la identidad del anfitrión ha sido verificada.
+
+---
+
+### Variables de Ubicación
+
+- **neighbourhood:** Nombre del vecindario donde se encuentra el alojamiento.
+- **neighbourhood_cleansed:** Versión estandarizada del vecindario utilizada para análisis.
+- **neighbourhood_group_cleansed:** Agrupación mayor de vecindarios.
+- **latitude:** Latitud geográfica del alojamiento.
+- **longitude:** Longitud geográfica del alojamiento.
+- **city:** Ciudad donde se encuentra el alojamiento.
+
+---
+
+### Características de la Propiedad
+
+- **property_type:** Tipo de propiedad (por ejemplo, apartamento, casa o estudio).
+- **room_type:** Tipo de habitación ofrecida (casa completa, habitación privada o compartida).
+- **accommodates:** Número máximo de huéspedes que puede alojar la propiedad.
+- **bathrooms:** Número de baños disponibles en el alojamiento.
+- **bathrooms_text:** Descripción textual del número de baños.
+- **bedrooms:** Número de dormitorios disponibles.
+- **beds:** Número total de camas disponibles.
+- **amenities:** Lista de amenidades ofrecidas en el alojamiento (wifi, cocina, aire acondicionado, etc.).
+
+---
+
+### Variables de Precio y Restricciones de Reserva
+
+- **price:** Precio por noche del alojamiento. Esta es la **variable objetivo** que se utilizará para los modelos de regresión.
+- **minimum_nights:** Número mínimo de noches requeridas para reservar el alojamiento.
+- **maximum_nights:** Número máximo de noches permitidas para una reserva.
+- **minimum_minimum_nights:** Valor mínimo observado del requisito de noches mínimas.
+- **maximum_minimum_nights:** Valor máximo observado del requisito de noches mínimas.
+- **minimum_maximum_nights:** Valor mínimo permitido para noches máximas.
+- **maximum_maximum_nights:** Valor máximo permitido para noches máximas.
+- **minimum_nights_avg_ntm:** Promedio de noches mínimas requeridas en un periodo reciente.
+- **maximum_nights_avg_ntm:** Promedio de noches máximas permitidas.
+
+---
+
+### Variables de Disponibilidad
+
+- **calendar_updated:** Indica si el calendario de disponibilidad ha sido actualizado.
+- **has_availability:** Indica si el alojamiento tiene disponibilidad para reservas.
+- **availability_30:** Número de días disponibles en los próximos 30 días.
+- **availability_60:** Número de días disponibles en los próximos 60 días.
+- **availability_90:** Número de días disponibles en los próximos 90 días.
+- **availability_365:** Número de días disponibles en los próximos 365 días.
+- **calendar_last_scraped:** Fecha de la última actualización del calendario.
+- **availability_eoy:** Disponibilidad estimada al final del año.
+
+---
+
+### Variables de Reseñas
+
+- **number_of_reviews:** Número total de reseñas recibidas por el alojamiento.
+- **number_of_reviews_ltm:** Número de reseñas recibidas en los últimos 12 meses.
+- **number_of_reviews_l30d:** Número de reseñas recibidas en los últimos 30 días.
+- **number_of_reviews_ly:** Número de reseñas recibidas durante el último año.
+- **reviews_per_month:** Promedio de reseñas recibidas por mes.
+- **first_review:** Fecha de la primera reseña registrada.
+- **last_review:** Fecha de la reseña más reciente.
+
+---
+
+### Variables de Calificación del Alojamiento
+
+- **review_scores_rating:** Calificación promedio general del alojamiento.
+- **review_scores_accuracy:** Calificación de precisión entre la descripción y el alojamiento real.
+- **review_scores_cleanliness:** Calificación de limpieza del alojamiento.
+- **review_scores_checkin:** Calificación del proceso de check-in.
+- **review_scores_communication:** Calificación de la comunicación con el anfitrión.
+- **review_scores_location:** Calificación de la ubicación del alojamiento.
+- **review_scores_value:** Calificación de la relación calidad-precio.
+
+---
+
+### Variables de Desempeño del Alojamiento
+
+- **estimated_occupancy_l365d:** Estimación del número de días que el alojamiento estuvo ocupado durante el último año.
+- **estimated_revenue_l365d:** Estimación de los ingresos generados por el alojamiento durante los últimos 365 días.
+
+---
+
+### Variables Administrativas
+
+- **license:** Número de licencia del alojamiento cuando aplica.
+- **instant_bookable:** Indica si el alojamiento permite reservas instantáneas.
+- **calculated_host_listings_count:** Número total de propiedades activas del anfitrión.
+- **calculated_host_listings_count_entire_homes:** Número de listados de casas completas del anfitrión.
+- **calculated_host_listings_count_private_rooms:** Número de habitaciones privadas del anfitrión.
+- **calculated_host_listings_count_shared_rooms:** Número de habitaciones compartidas ofrecidas por el anfitrión.
+
+
 ## Análisis exploratorio
 
 ```{r análisis exploratorio}

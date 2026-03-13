@@ -429,3 +429,37 @@ Con base en el análisis exploratorio y las correlaciones, las variables que par
 Estas variables describen el tamaño y el tipo de propiedad, factores que intuitivamente influyen en el precio de una propiedad en Airbnb.
 
 
+```{r Justificación modelos de regresión}
+plot(listings_clean$accommodates,
+     listings_clean$price,
+     pch=20,
+     cex=0.4,
+     main="Relación entre capacidad y precio",
+     xlab="Capacidad del alojamiento",
+     ylab="Precio")
+
+boxplot(price ~ room_type,
+        data=listings_clean,
+        main="Precio por tipo de habitación",
+        xlab="Tipo de habitación",
+        ylab="Precio")
+
+boxplot(price ~ city,
+        data=listings_clean,
+        las=2,
+        main="Distribución de precios por ciudad",
+        xlab="Ciudad",
+        ylab="Precio")
+```
+
+El gráfico de dispersión muestra la relación entre la capacidad máxima de huéspedes que puede alojar una propiedad (accommodates) y el precio por noche. 
+
+Se observa una ligera tendencia positiva, donde los alojamientos con mayor capacidad tienden a presentar precios más altos. Esto es consistente con la lógica del mercado, ya que propiedades que pueden alojar a más personas suelen ser más grandes o contar con más comodidades. Sin embargo, la dispersión de los puntos es considerablemente alta, lo que indica que la capacidad por sí sola no explica completamente el precio del alojamiento.
+
+El diagrama de caja muestra la distribución de precios según el tipo de habitación ofrecida en el alojamiento. Se observa que los alojamientos completos (Entire home/apt) tienden a presentar precios más altos en comparación con las habitaciones privadas o compartidas. Esto se debe a que ofrecen mayor privacidad, espacio y comodidad para los huéspedes.
+
+Las habitaciones privadas (Private room) presentan precios intermedios, mientras que las habitaciones compartidas (Shared room) suelen ser las opciones más económicas dentro de la plataforma.
+
+En el tercer gráfico se observa que existen diferencias importantes en la distribución de precios entre ciudades, lo que sugiere que la ubicación geográfica tiene una influencia significativa en el valor de los alojamientos. Algunas ciudades presentan una mayor dispersión en los precios y una mayor presencia de valores atípicos, lo que podría estar relacionado con zonas turísticas o propiedades de lujo dentro de esas ubicaciones.
+
+Además, en varias ciudades se observa que la mayoría de los alojamientos se concentran en rangos de precios relativamente bajos, mientras que un número reducido de propiedades alcanza precios extremadamente altos.

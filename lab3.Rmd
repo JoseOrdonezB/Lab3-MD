@@ -9,13 +9,19 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r librerias}
+library(corrplot)
+```
+
 ## Lectura de datos
+
 ```{r cargar datos}
 load("listings.RData")
 head(listings)
 ```
 
 ## Análisis exploratorio
+
 ```{r análisis exploratorio}
 dim(listings_clean)
 names(listings_clean)
@@ -24,6 +30,7 @@ summary(listings_clean)
 ```
 
 ## Formatear datos
+
 ```{r formatear datos}
 listings$price <- as.numeric(gsub("[$,]", "", listings$price))
 
@@ -70,13 +77,16 @@ listings_clean <- listings_clean[complete.cases(listings_clean), ]
 colSums(is.na(listings_clean))
 
 ```
+
 Después del análisis de valores faltantes, se aplicaron distintas estrategias de tratamiento según el porcentaje de datos faltantes. En el caso de la variable precio, se eliminaron las observaciones sin valor debido a que esta variable será utilizada como variable objetivo.
 
 Para variables estructurales del alojamiento como número de habitaciones, camas y baños, los valores faltantes fueron imputados utilizando la mediana.
 
 En las variables relacionadas con las reseñas, los valores faltantes fueron reemplazados por cero, representando la ausencia de reseñas en el alojamiento.
 
-Finalmente, las pocas observaciones restantes con valores faltantesfueron eliminadas para obtener un conjunto de datos completamente limpio.
+Las pocas observaciones restantes con valores faltantes fueron eliminadas para obtener un conjunto de datos completamente limpio.
+
+## Análisis de variable objetivo
 
 ```{r variable objetivo}
 hist(listings_clean$price, breaks=100)
@@ -85,11 +95,14 @@ summary(listings_clean$price)
 
 boxplot(listings_clean$price)
 ```
+
 El análisis de la variable precio muestra una distribución fuertemente sesgada hacia la derecha. Mientras que la mediana del precio es de 193, la media alcanza 750, lo que indica la presencia de valores extremadamente altos que influyen en el promedio.
 
 El 75% de los alojamientos tienen precios inferiores a 326, lo que sugiere que la mayoría de las propiedades se encuentran dentro de un rango moderado de precios. Sin embargo, se observan valores máximos que superan los 50,000, lo que evidencia la presencia de outliers significativos en el conjunto de datos.
 
-```{r análisis de variables númericas}
+## Análisis de variables numéricas
+
+```{r análisis de variables numéricas}
 summary(listings_clean$accommodates)
 
 hist(listings_clean$accommodates,
@@ -140,11 +153,88 @@ hist(listings_clean$review_scores_rating,
      xlab = "Rating")
 
 ```
+
 El análisis de las variables numéricas muestra que la mayoría de los alojamientos tienen características relativamente similares. La capacidad de hospedaje se concentra principalmente entre dos y seis personas, mientras que la mayoría de las propiedades cuentan con uno o dos dormitorios, uno o dos baños y entre una y tres camas, lo que sugiere que la oferta está orientada a alojamientos pequeños o medianos.
 
 En cuanto a la actividad en la plataforma, la mayoría de los alojamientos tiene pocas reseñas y una baja frecuencia de reseñas por mes, aunque algunos acumulan una cantidad significativamente mayor, lo que indica una distribución desigual en la popularidad de los alojamientos. Asimismo, las calificaciones se concentran en valores altos, generalmente entre 4.5 y 5, lo que refleja un alto nivel de satisfacción por parte de los huéspedes.
 
-Finalmente, se identificaron algunos valores extremos en variables como número de dormitorios, camas y reseñas, lo que sugiere la presencia de propiedades de gran tamaño o posibles valores atípicos en el conjunto de datos.
+Se identificaron algunos valores extremos en variables como número de dormitorios, camas y reseñas, lo que sugiere la presencia de propiedades de gran tamaño o posibles valores atípicos en el conjunto de datos.
 
+## Análisis de variables categóricas
 
+```{r análisis variables categóricas}
+table(listings_clean$room_type)
 
+prop.table(table(listings_clean$room_type))
+
+barplot(table(listings_clean$room_type),
+        main="Tipos de habitación",
+        las=2)
+
+table(listings_clean$property_type)
+
+barplot(sort(table(listings_clean$property_type), decreasing=TRUE)[1:10],
+        las=2)
+
+table(listings_clean$host_is_superhost)
+
+table(listings_clean$instant_bookable)
+
+table(listings_clean$city)
+
+plot(listings_clean$longitude,
+     listings_clean$latitude,
+     pch=20,
+     cex=0.3,
+     main="Distribución geográfica de alojamientos")
+```
+
+El análisis de las variables categóricas muestra que la mayoría de los alojamientos corresponden a viviendas completas, lo que indica que los anfitriones tienden a alquilar propiedades completas en lugar de habitaciones individuales. Asimismo, se observa una gran diversidad en los tipos de propiedades disponibles, aunque la mayor parte corresponde a apartamentos, condominios y casas completas.
+
+En cuanto a los anfitriones, una proporción considerable posee el estatus de superhost, lo que sugiere altos niveles de experiencia y calidad en el servicio. Además, una parte importante de los alojamientos permite reservas instantáneas, facilitando el proceso de reserva para los huéspedes.
+
+La distribución geográfica del dataset muestra una fuerte concentración en ciertos destinos turísticos, particularmente en Hawaii, lo que indica que la oferta de alojamientos no está distribuida de manera uniforme entre las distintas ciudades.
+
+## Relación entre variables
+
+```{r relaciones con precio}
+boxplot(price ~ accommodates, data=listings_clean)
+boxplot(price ~ bedrooms, data=listings_clean)
+boxplot(price ~ bathrooms, data=listings_clean)
+boxplot(price ~ room_type, data=listings_clean)
+boxplot(price ~ city, data=listings_clean)
+boxplot(price ~ host_is_superhost, data=listings_clean)
+plot(listings_clean$review_scores_rating, listings_clean$price)
+```
+
+El análisis de la relación entre el precio y otras variables sugiere que las características estructurales del alojamiento, como la capacidad, el número de dormitorios y el número de baños, tienen una relación positiva con el precio. Asimismo, el tipo de habitación muestra una influencia significativa, ya que las viviendas completas tienden a tener precios considerablemente más altos que las habitaciones privadas o compartidas.
+
+También se observan variaciones en los precios entre distintas ciudades, lo que indica que factores geográficos y turísticos influyen en el valor de los alojamientos. En contraste, variables como la calificación promedio de los alojamientos parecen tener una relación menos marcada con el precio.
+
+## Correlación entre variables
+
+```{r correlacion}
+vars_importantes <- listings_clean[, c(
+"price",
+"accommodates",
+"bedrooms",
+"bathrooms",
+"beds",
+"number_of_reviews",
+"reviews_per_month",
+"review_scores_rating"
+)]
+
+cor_matrix <- cor(vars_importantes)
+
+corrplot(cor_matrix,
+         method = "color",
+         type = "upper",
+         tl.cex = 0.8)
+```
+
+El análisis de correlación muestra que el precio de los alojamientos tiene una relación positiva con variables relacionadas con el tamaño y la capacidad del alojamiento, como accommodates, bedrooms, bathrooms y beds. Esto indica que las propiedades más grandes y con mayor capacidad para huéspedes tienden a tener precios más altos.
+
+Además, se observa una alta correlación entre estas variables estructurales, lo que sugiere que todas describen en gran medida el tamaño del alojamiento.
+
+Por otro lado, las variables relacionadas con reseñas y calificaciones, como number_of_reviews, reviews_per_month y review_scores_rating, muestran una relación débil con el precio, lo que indica que la popularidad o las calificaciones del alojamiento no influyen significativamente en el costo.

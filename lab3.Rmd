@@ -25,9 +25,55 @@ summary(listings)
 
 ## Formatear datos
 ```{r formatear datos}
-listings$price <- as.numeric(gsub("[$,]","",listings$price))
+listings$price <- as.numeric(gsub("[$,]", "", listings$price))
 
-listings$calendar_updated <- NULL
+cols_remove <- c(
+"id","listing_url","picture_url","host_url","description","host_about",
+"calendar_updated","neighbourhood_group_cleansed","license"
+)
+
+listings_clean <- listings[, !(names(listings) %in% cols_remove)]
+
+listings_clean <- listings_clean[!is.na(listings_clean$price), ]
+
+median_cols <- c(
+"bedrooms",
+"beds",
+"bathrooms",
+"host_listings_count",
+"host_total_listings_count"
+)
+
+listings_clean[median_cols] <- lapply(listings_clean[median_cols], function(x){
+  x[is.na(x)] <- median(x, na.rm=TRUE)
+  x
+})
+
+review_cols <- c(
+"review_scores_rating",
+"review_scores_accuracy",
+"review_scores_cleanliness",
+"review_scores_checkin",
+"review_scores_communication",
+"review_scores_location",
+"review_scores_value",
+"reviews_per_month"
+)
+
+listings_clean[review_cols] <- lapply(listings_clean[review_cols], function(x){
+  x[is.na(x)] <- 0
+  x
+})
+
+listings_clean <- listings_clean[complete.cases(listings_clean), ]
+
+colSums(is.na(listings_clean))
+
 ```
+Después del análisis de valores faltantes, se aplicaron distintas estrategias de tratamiento según el porcentaje de datos faltantes. En el caso de la variable precio, se eliminaron las observaciones sin valor debido a que esta variable será utilizada como variable objetivo.
 
+Para variables estructurales del alojamiento como número de habitaciones, camas y baños, los valores faltantes fueron imputados utilizando la mediana.
 
+En las variables relacionadas con las reseñas, los valores faltantes fueron reemplazados por cero, representando la ausencia de reseñas en el alojamiento.
+
+Finalmente, las pocas observaciones restantes con valores faltantesfueron eliminadas para obtener un conjunto de datos completamente limpio.

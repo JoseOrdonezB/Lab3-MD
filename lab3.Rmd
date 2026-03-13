@@ -4,6 +4,7 @@ author: "Jose Ordoñez, Daniela Ramírez, Adrián González"
 date: "2026-03-13"
 output: html_document
 ---
+Link de Github: https://github.com/JoseOrdonezB/Lab3-MD.git 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)

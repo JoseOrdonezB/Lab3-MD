@@ -1,6 +1,6 @@
 ---
 title: "lab3 - md"
-author: "Jose Ordoñez"
+author: "Jose Ordoñez, Daniela Ramírez, Adrián González"
 date: "2026-03-13"
 output: html_document
 ---
@@ -168,7 +168,7 @@ El conjunto de datos contiene 171,748 observaciones de alojamientos publicados e
 - **calculated_host_listings_count_shared_rooms:** Número de habitaciones compartidas ofrecidas por el anfitrión.
 
 
-## Análisis exploratorio
+## Análisis exploratorio (Después de formatear datos)
 
 ```{r análisis exploratorio}
 dim(listings_clean)
@@ -386,3 +386,46 @@ El análisis de correlación muestra que el precio de los alojamientos tiene una
 Además, se observa una alta correlación entre estas variables estructurales, lo que sugiere que todas describen en gran medida el tamaño del alojamiento.
 
 Por otro lado, las variables relacionadas con reseñas y calificaciones, como number_of_reviews, reviews_per_month y review_scores_rating, muestran una relación débil con el precio, lo que indica que la popularidad o las calificaciones del alojamiento no influyen significativamente en el costo.
+
+
+## Añadidos extra
+```{r Analisis de outliers}
+boxplot(listings_clean$price,
+        main="Outliers en el precio",
+        horizontal=TRUE)
+```
+
+El diagrama de caja del precio de los alojamientos muestra la presencia de numerosos valores atípicos (outliers) en el conjunto de datos. La mayor parte de las propiedades se concentra en un rango relativamente bajo de precios, mientras que existe un grupo reducido de alojamientos con precios extremadamente altos.
+
+Estos valores extremos superan ampliamente el rango principal de la distribución, llegando incluso a valores cercanos a 50,000 por noche, lo cual es considerablemente mayor que el precio típico observado en la mayoría de los alojamientos. 
+
+Los valores atípicos pueden afectar significativamente los modelos de regresión lineal, ya que estos modelos son sensibles a observaciones extremas. Por esta razón, en etapas posteriores del análisis será importante evaluar si estos valores deben ser tratados mediante transformaciones, filtrado o técnicas de regularización para evitar que distorsionen la capacidad predictiva del modelo.
+
+```{r Otras pruebas de correlación}
+cor(vars_importantes$price, vars_importantes$accommodates)
+cor(vars_importantes$price, vars_importantes$bedrooms)
+cor(vars_importantes$price, vars_importantes$bathrooms)
+```
+
+Se calcularon coeficientes de correlación de Pearson entre el precio de los alojamientos y algunas variables estructurales relevantes del dataset.
+
+Estos valores indican que existe una correlación positiva entre el precio y las variables relacionadas con el tamaño del alojamiento, lo que sugiere que propiedades con mayor capacidad, más dormitorios o más baños tienden a tener precios más altos (lo cual es mun poco obvio, pero es importante resaltarlo).
+
+Sin embargo, la magnitud de estas correlaciones es relativamente baja, ya que los coeficientes se encuentran cercanos a cero. Esto significa que, aunque existe una relación positiva, ninguna de estas variables por sí sola explica de forma fuerte la variación en el precio de las propiedades.
+
+Este resultado sugiere que el precio de los alojamientos probablemente depende de una combinación de múltiples factores, como la ubicación, el tipo de propiedad, las características del anfitrión o las calificaciones de los huéspedes, más que únicamente del tamaño del alojamiento.
+
+## Variables potencialmente predictoras
+
+Con base en el análisis exploratorio y las correlaciones, las variables que parecen tener mayor relación con el precio son:
+
+- accommodates
+- bedrooms
+- bathrooms
+- beds
+-room_type
+-city
+
+Estas variables describen el tamaño y el tipo de propiedad, factores que intuitivamente influyen en el precio de una propiedad en Airbnb.
+
+

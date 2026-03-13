@@ -1,0 +1,33 @@
+---
+title: "lab3 - md"
+author: "Jose Ordoñez"
+date: "2026-03-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Lectura de datos
+```{r cargar datos}
+load("listings.RData")
+head(listings)
+```
+
+## Análisis exploratorio
+```{r análisis exploratorio}
+dim(listings)
+names(listings)
+str(listings)
+summary(listings)
+```
+
+## Formatear datos
+```{r formatear datos}
+listings$price <- as.numeric(gsub("[$,]","",listings$price))
+
+listings$calendar_updated <- NULL
+```
+
+

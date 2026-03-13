@@ -17,10 +17,10 @@ head(listings)
 
 ## Análisis exploratorio
 ```{r análisis exploratorio}
-dim(listings)
-names(listings)
-str(listings)
-summary(listings)
+dim(listings_clean)
+names(listings_clean)
+str(listings_clean)
+summary(listings_clean)
 ```
 
 ## Formatear datos
@@ -77,3 +77,74 @@ Para variables estructurales del alojamiento como número de habitaciones, camas
 En las variables relacionadas con las reseñas, los valores faltantes fueron reemplazados por cero, representando la ausencia de reseñas en el alojamiento.
 
 Finalmente, las pocas observaciones restantes con valores faltantesfueron eliminadas para obtener un conjunto de datos completamente limpio.
+
+```{r variable objetivo}
+hist(listings_clean$price, breaks=100)
+
+summary(listings_clean$price)
+
+boxplot(listings_clean$price)
+```
+El análisis de la variable precio muestra una distribución fuertemente sesgada hacia la derecha. Mientras que la mediana del precio es de 193, la media alcanza 750, lo que indica la presencia de valores extremadamente altos que influyen en el promedio.
+
+El 75% de los alojamientos tienen precios inferiores a 326, lo que sugiere que la mayoría de las propiedades se encuentran dentro de un rango moderado de precios. Sin embargo, se observan valores máximos que superan los 50,000, lo que evidencia la presencia de outliers significativos en el conjunto de datos.
+
+```{r análisis de variables númericas}
+summary(listings_clean$accommodates)
+
+hist(listings_clean$accommodates,
+     breaks = 20,
+     main = "Distribución de capacidad del alojamiento",
+     xlab = "Número de personas")
+
+summary(listings_clean$bedrooms)
+
+hist(listings_clean$bedrooms,
+     breaks = 20,
+     main = "Distribución de dormitorios",
+     xlab = "Número de dormitorios")
+
+summary(listings_clean$bathrooms)
+
+hist(listings_clean$bathrooms,
+     breaks = 20,
+     main = "Distribución de baños",
+     xlab = "Número de baños")
+
+summary(listings_clean$beds)
+
+hist(listings_clean$beds,
+     breaks = 20,
+     main = "Distribución de camas",
+     xlab = "Número de camas")
+
+summary(listings_clean$number_of_reviews)
+
+hist(listings_clean$number_of_reviews,
+     breaks = 50,
+     main = "Distribución de número de reseñas",
+     xlab = "Número de reseñas")
+
+summary(listings_clean$reviews_per_month)
+
+hist(listings_clean$reviews_per_month,
+     breaks = 50,
+     main = "Reseñas por mes",
+     xlab = "Reviews por mes")
+
+summary(listings_clean$review_scores_rating)
+
+hist(listings_clean$review_scores_rating,
+     breaks = 20,
+     main = "Distribución de calificaciones",
+     xlab = "Rating")
+
+```
+El análisis de las variables numéricas muestra que la mayoría de los alojamientos tienen características relativamente similares. La capacidad de hospedaje se concentra principalmente entre dos y seis personas, mientras que la mayoría de las propiedades cuentan con uno o dos dormitorios, uno o dos baños y entre una y tres camas, lo que sugiere que la oferta está orientada a alojamientos pequeños o medianos.
+
+En cuanto a la actividad en la plataforma, la mayoría de los alojamientos tiene pocas reseñas y una baja frecuencia de reseñas por mes, aunque algunos acumulan una cantidad significativamente mayor, lo que indica una distribución desigual en la popularidad de los alojamientos. Asimismo, las calificaciones se concentran en valores altos, generalmente entre 4.5 y 5, lo que refleja un alto nivel de satisfacción por parte de los huéspedes.
+
+Finalmente, se identificaron algunos valores extremos en variables como número de dormitorios, camas y reseñas, lo que sugiere la presencia de propiedades de gran tamaño o posibles valores atípicos en el conjunto de datos.
+
+
+

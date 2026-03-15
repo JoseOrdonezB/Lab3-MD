@@ -528,3 +528,60 @@ dim(test_data)
 
 El conjunto de datos fue dividido en dos subconjuntos: un conjunto de entrenamiento (70%) y un conjunto de prueba (30%). La división se realizó de forma aleatoria utilizando una semilla fija (set.seed(123)), lo cual garantiza que los resultados sean reproducibles.
 
+
+## Ingeniería de características: 
+Con el objetivo de identificar variables que puedan ser buenos predictores del precio de los alojamientos, se realizó un proceso de selección de características basado en el análisis exploratorio, el análisis de correlación y el análisis de agrupamiento realizado previamente.
+
+En primer lugar, se priorizaron variables relacionadas con las características estructurales del alojamiento, como:
+
+- accommodates
+- bedrooms
+- bathrooms
+- beds
+
+Estas variables describen el tamaño y la capacidad del alojamiento. En el análisis exploratorio se observó que estas características presentan una relación positiva con el precio, ya que propiedades más grandes o con mayor capacidad tienden a tener precios más elevados. Además, en el análisis de correlación se identificó que estas variables mantienen relaciones positivas con la variable objetivo.
+
+También se consideraron variables relacionadas con el tipo y la ubicación del alojamiento, tales como room_type y city
+
+El tipo de habitación influye en el nivel de privacidad y el tipo de servicio ofrecido al huésped, lo cual impacta directamente en el precio. Por su parte, la ciudad refleja diferencias geográficas y turísticas entre los mercados de alojamiento, lo que también puede generar variaciones importantes en los precios.
+
+Por otro lado, algunas variables fueron descartadas como posibles predictores directos. Variables textuales como description, host_about o amenities no fueron utilizadas debido a su naturaleza no estructurada, lo que requeriría técnicas adicionales de procesamiento de texto. Asimismo, variables identificadoras como id, listing_url o host_url fueron eliminadas durante el preprocesamiento, ya que no aportan información relevante para la predicción del precio.
+
+En conjunto, las variables seleccionadas permiten capturar información sobre el tamaño del alojamiento, el tipo de propiedad y la ubicación, factores que se consideran fundamentales para explicar el precio dentro del mercado de alojamientos de Airbnb.
+
+```{r regreasión lineal accommodates}
+modelo_simple <- lm(price ~ accommodates, data=train_data)
+summary(modelo_simple)
+
+plot(train_data$accommodates,
+     train_data$price,
+     pch=20,
+     col="gray",
+     main="Regresión lineal simple")
+
+abline(modelo_simple, col="red", lwd=2)
+
+par(mfrow=c(2,2))
+plot(modelo_simple)
+```
+Para comenzar el análisis predictivo, se construyó un modelo de regresión lineal simple utilizando la variable accommodates como predictor del precio de los alojamientos.
+El modelo estimado tiene la siguiente forma:
+price = 49.8 + 144.5 * accommodates
+Según el modelo, cada huésped adicional que puede alojar la propiedad incrementa el precio esperado en aproximadamente 144.5 unidades monetarias.
+
+Los resultados del modelo muestran que el coeficiente asociado a la variable accommodates es estadísticamente significativo, con un p-valor menor a 2e-16. Esto indica que existe evidencia estadística de que la capacidad del alojamiento tiene una relación con el precio.
+Asimismo, el estadístico F del modelo también es significativo, lo que sugiere que el modelo tiene capacidad explicativa mayor que un modelo sin predictores.
+
+Por otro lado, el modelo presenta un R² de aproximadamente 0.01. Por lo que, aunque existe una relación entre la capacidad del alojamiento y el precio, esta variable por sí sola no es suficiente para explicar adecuadamente el precio de las propiedades. Es probable que otros factores, como la ubicación, el tipo de alojamiento o las características del anfitrión, tengan un papel importante en la determinación del precio.
+
+El gráfico de dispersión con la línea de regresión muestra una ligera tendencia creciente, donde alojamientos con mayor capacidad tienden a tener precios más altos. Sin embargo, se observa una alta dispersión en los datos, con propiedades que presentan precios muy diferentes incluso teniendo la misma capacidad de huéspedes. Esto confirma que la relación entre ambas variables es débil y que el precio depende de múltiples factores adicionales.
+
+En el gráfico Residuals vs Fitted, se observa una dispersión considerable de los residuos y la presencia de algunos valores extremos, lo que sugiere que el modelo no captura completamente la variabilidad del precio.
+
+El gráfico Q-Q de los residuos muestra desviaciones importantes respecto a la línea teórica, indicando que los residuos no siguen una distribución normal, posiblemente debido a la presencia de valores atípicos en el precio.
+
+En el gráfico Scale-Location se observa que la variabilidad de los residuos aumenta ligeramente con los valores ajustados, lo que puede indicar heterocedasticidad, es decir, que la varianza de los errores no es constante.
+
+Finalmente, el gráfico Residuals vs Leverage muestra algunas observaciones con mayor influencia en el modelo, lo que sugiere que ciertos valores extremos podrían estar afectando la estimación de la regresión.
+
+En conjunto, la capacidad del alojamiento tiene una relación positiva con el precio, pero su capacidad explicativa es limitada.

@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r librerias}
 library(corrplot)
+library(dplyr)
 ```
 
 ## Lectura de datos
@@ -464,3 +465,66 @@ Las habitaciones privadas (Private room) presentan precios intermedios, mientras
 En el tercer gráfico se observa que existen diferencias importantes en la distribución de precios entre ciudades, lo que sugiere que la ubicación geográfica tiene una influencia significativa en el valor de los alojamientos. Algunas ciudades presentan una mayor dispersión en los precios y una mayor presencia de valores atípicos, lo que podría estar relacionado con zonas turísticas o propiedades de lujo dentro de esas ubicaciones.
 
 Además, en varias ciudades se observa que la mayoría de los alojamientos se concentran en rangos de precios relativamente bajos, mientras que un número reducido de propiedades alcanza precios extremadamente altos.
+
+## Análisis de grupos (Clustering)
+
+```{r Cluster}
+cluster_data <- listings_clean %>%
+  select(accommodates, bedrooms, bathrooms, beds, price)
+
+cluster_scaled <- scale(cluster_data)
+
+set.seed(123)
+
+kmeans_model <- kmeans(cluster_scaled, centers = 3)
+
+cluster_data$cluster <- as.factor(kmeans_model$cluster)
+
+table(cluster_data$cluster)
+```
+
+```{r Visualización de clusters}
+plot(cluster_data$accommodates,
+     cluster_data$price,
+     col=cluster_data$cluster,
+     pch=20,
+     main="Clusters de alojamientos",
+     xlab="Capacidad",
+     ylab="Precio")
+```
+
+Se aplicó el algoritmo K-means para identificar grupos de alojamientos con características similares. Para este análisis se utilizaron variables relacionadas con el tamaño y características estructurales del alojamiento: accommodates, bedrooms, bathrooms, beds y price.
+El algoritmo se ejecutó con k = 3, generando tres grupos principales de alojamientos. La distribución de observaciones en cada grupo fue la siguiente:
+
+Cluster 1: 43,602 alojamientos
+
+Cluster 2: 5,002 alojamientos
+
+Cluster 3: 27,595 alojamientos
+
+A partir del gráfico que muestra la relación entre la capacidad del alojamiento y el precio, se pueden identificar patrones en los grupos generados:
+
+Cluster 1 (negro):
+Este grupo contiene principalmente alojamientos con menor capacidad y precios relativamente bajos. Corresponde a propiedades pequeñas o estándar dentro del mercado de Airbnb, que probablemente incluyen apartamentos pequeños o habitaciones privadas.
+
+Cluster 2 (verde):
+Este grupo representa un segmento intermedio del mercado, con alojamientos que presentan características mixtas en términos de capacidad y precio. Este cluster podría corresponder a propiedades de tamaño medio o alojamientos con características particulares que los diferencian de los otros grupos.
+
+Cluster 3 (rojo):
+Este cluster agrupa alojamientos con mayor capacidad y una mayor variabilidad en los precios. Estas propiedades pueden corresponder a alojamientos más grandes, como casas completas o propiedades diseñadas para grupos grandes.
+
+## División estrenamiento / prueba
+```{r}
+set.seed(123)
+
+train_index <- sample(1:nrow(listings_clean), 0.7*nrow(listings_clean))
+
+train_data <- listings_clean[train_index, ]
+test_data <- listings_clean[-train_index, ]
+
+dim(train_data)
+dim(test_data)
+```
+
+El conjunto de datos fue dividido en dos subconjuntos: un conjunto de entrenamiento (70%) y un conjunto de prueba (30%). La división se realizó de forma aleatoria utilizando una semilla fija (set.seed(123)), lo cual garantiza que los resultados sean reproducibles.
+

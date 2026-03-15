@@ -4,7 +4,8 @@ author: "Jose Ordoñez, Daniela Ramírez, Adrián González"
 date: "2026-03-13"
 output: html_document
 ---
-Link de Github: https://github.com/JoseOrdonezB/Lab3-MD.git 
+
+Link de Github: <https://github.com/JoseOrdonezB/Lab3-MD.git>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -13,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r librerias}
 library(corrplot)
 library(dplyr)
+library(car)
 ```
 
 ## Lectura de datos
@@ -20,155 +22,148 @@ library(dplyr)
 ```{r cargar datos}
 load("listings.RData")
 head(listings)
-```
-
-##Variables
-```{r}
-load("listings.RData")
+str(listings)
 summary(listings)
 ```
 
-```{r}
-load("listings.RData")
-str(listings)
-```
+##Variables
+
 El conjunto de datos contiene 171,748 observaciones de alojamientos publicados en Airbnb y 80 variables que describen características del listado, del anfitrión, de la propiedad, disponibilidad, reseñas y desempeño del alojamiento. Estas variables permiten analizar los factores que influyen en el precio y la ocupación de las propiedades.
 
 ## Descripción de Variables
 
 ### Variables de Identificación del Listado
 
-- **id:** Identificador único del alojamiento dentro de la plataforma Airbnb.
-- **listing_url:** URL del anuncio del alojamiento en la plataforma Airbnb.
-- **scrape_id:** Identificador del proceso de extracción de datos utilizado para generar el dataset.
-- **last_scraped:** Fecha en la que el registro fue extraído de la plataforma.
-- **source:** Fuente del proceso de recolección de datos.
+-   **id:** Identificador único del alojamiento dentro de la plataforma Airbnb.
+-   **listing_url:** URL del anuncio del alojamiento en la plataforma Airbnb.
+-   **scrape_id:** Identificador del proceso de extracción de datos utilizado para generar el dataset.
+-   **last_scraped:** Fecha en la que el registro fue extraído de la plataforma.
+-   **source:** Fuente del proceso de recolección de datos.
 
----
+------------------------------------------------------------------------
 
 ### Información General del Alojamiento
 
-- **name:** Nombre del alojamiento publicado en Airbnb.
-- **description:** Descripción del alojamiento proporcionada por el anfitrión.
-- **neighborhood_overview:** Descripción del vecindario donde se encuentra la propiedad.
-- **picture_url:** URL de la imagen principal del alojamiento.
+-   **name:** Nombre del alojamiento publicado en Airbnb.
+-   **description:** Descripción del alojamiento proporcionada por el anfitrión.
+-   **neighborhood_overview:** Descripción del vecindario donde se encuentra la propiedad.
+-   **picture_url:** URL de la imagen principal del alojamiento.
 
----
+------------------------------------------------------------------------
 
 ### Información del Anfitrión
 
-- **host_id:** Identificador único del anfitrión.
-- **host_url:** URL del perfil del anfitrión en Airbnb.
-- **host_name:** Nombre del anfitrión.
-- **host_since:** Fecha en la que el anfitrión se registró en Airbnb.
-- **host_location:** Ubicación declarada por el anfitrión.
-- **host_about:** Descripción del anfitrión.
-- **host_response_time:** Tiempo promedio que tarda el anfitrión en responder consultas.
-- **host_response_rate:** Porcentaje de mensajes respondidos por el anfitrión.
-- **host_acceptance_rate:** Porcentaje de solicitudes de reserva aceptadas.
-- **host_is_superhost:** Indica si el anfitrión tiene la categoría de “Superhost”.
-- **host_thumbnail_url:** URL de la imagen pequeña del perfil del anfitrión.
-- **host_picture_url:** URL de la imagen del perfil del anfitrión.
-- **host_neighbourhood:** Vecindario donde se encuentra el anfitrión.
-- **host_listings_count:** Número de propiedades activas que el anfitrión tiene listadas.
-- **host_total_listings_count:** Número total de propiedades registradas por el anfitrión.
-- **host_verifications:** Métodos mediante los cuales el anfitrión ha verificado su cuenta.
-- **host_has_profile_pic:** Indica si el anfitrión tiene una foto de perfil.
-- **host_identity_verified:** Indica si la identidad del anfitrión ha sido verificada.
+-   **host_id:** Identificador único del anfitrión.
+-   **host_url:** URL del perfil del anfitrión en Airbnb.
+-   **host_name:** Nombre del anfitrión.
+-   **host_since:** Fecha en la que el anfitrión se registró en Airbnb.
+-   **host_location:** Ubicación declarada por el anfitrión.
+-   **host_about:** Descripción del anfitrión.
+-   **host_response_time:** Tiempo promedio que tarda el anfitrión en responder consultas.
+-   **host_response_rate:** Porcentaje de mensajes respondidos por el anfitrión.
+-   **host_acceptance_rate:** Porcentaje de solicitudes de reserva aceptadas.
+-   **host_is_superhost:** Indica si el anfitrión tiene la categoría de “Superhost”.
+-   **host_thumbnail_url:** URL de la imagen pequeña del perfil del anfitrión.
+-   **host_picture_url:** URL de la imagen del perfil del anfitrión.
+-   **host_neighbourhood:** Vecindario donde se encuentra el anfitrión.
+-   **host_listings_count:** Número de propiedades activas que el anfitrión tiene listadas.
+-   **host_total_listings_count:** Número total de propiedades registradas por el anfitrión.
+-   **host_verifications:** Métodos mediante los cuales el anfitrión ha verificado su cuenta.
+-   **host_has_profile_pic:** Indica si el anfitrión tiene una foto de perfil.
+-   **host_identity_verified:** Indica si la identidad del anfitrión ha sido verificada.
 
----
+------------------------------------------------------------------------
 
 ### Variables de Ubicación
 
-- **neighbourhood:** Nombre del vecindario donde se encuentra el alojamiento.
-- **neighbourhood_cleansed:** Versión estandarizada del vecindario utilizada para análisis.
-- **neighbourhood_group_cleansed:** Agrupación mayor de vecindarios.
-- **latitude:** Latitud geográfica del alojamiento.
-- **longitude:** Longitud geográfica del alojamiento.
-- **city:** Ciudad donde se encuentra el alojamiento.
+-   **neighbourhood:** Nombre del vecindario donde se encuentra el alojamiento.
+-   **neighbourhood_cleansed:** Versión estandarizada del vecindario utilizada para análisis.
+-   **neighbourhood_group_cleansed:** Agrupación mayor de vecindarios.
+-   **latitude:** Latitud geográfica del alojamiento.
+-   **longitude:** Longitud geográfica del alojamiento.
+-   **city:** Ciudad donde se encuentra el alojamiento.
 
----
+------------------------------------------------------------------------
 
 ### Características de la Propiedad
 
-- **property_type:** Tipo de propiedad (por ejemplo, apartamento, casa o estudio).
-- **room_type:** Tipo de habitación ofrecida (casa completa, habitación privada o compartida).
-- **accommodates:** Número máximo de huéspedes que puede alojar la propiedad.
-- **bathrooms:** Número de baños disponibles en el alojamiento.
-- **bathrooms_text:** Descripción textual del número de baños.
-- **bedrooms:** Número de dormitorios disponibles.
-- **beds:** Número total de camas disponibles.
-- **amenities:** Lista de amenidades ofrecidas en el alojamiento (wifi, cocina, aire acondicionado, etc.).
+-   **property_type:** Tipo de propiedad (por ejemplo, apartamento, casa o estudio).
+-   **room_type:** Tipo de habitación ofrecida (casa completa, habitación privada o compartida).
+-   **accommodates:** Número máximo de huéspedes que puede alojar la propiedad.
+-   **bathrooms:** Número de baños disponibles en el alojamiento.
+-   **bathrooms_text:** Descripción textual del número de baños.
+-   **bedrooms:** Número de dormitorios disponibles.
+-   **beds:** Número total de camas disponibles.
+-   **amenities:** Lista de amenidades ofrecidas en el alojamiento (wifi, cocina, aire acondicionado, etc.).
 
----
+------------------------------------------------------------------------
 
 ### Variables de Precio y Restricciones de Reserva
 
-- **price:** Precio por noche del alojamiento. Esta es la **variable objetivo** que se utilizará para los modelos de regresión.
-- **minimum_nights:** Número mínimo de noches requeridas para reservar el alojamiento.
-- **maximum_nights:** Número máximo de noches permitidas para una reserva.
-- **minimum_minimum_nights:** Valor mínimo observado del requisito de noches mínimas.
-- **maximum_minimum_nights:** Valor máximo observado del requisito de noches mínimas.
-- **minimum_maximum_nights:** Valor mínimo permitido para noches máximas.
-- **maximum_maximum_nights:** Valor máximo permitido para noches máximas.
-- **minimum_nights_avg_ntm:** Promedio de noches mínimas requeridas en un periodo reciente.
-- **maximum_nights_avg_ntm:** Promedio de noches máximas permitidas.
+-   **price:** Precio por noche del alojamiento. Esta es la **variable objetivo** que se utilizará para los modelos de regresión.
+-   **minimum_nights:** Número mínimo de noches requeridas para reservar el alojamiento.
+-   **maximum_nights:** Número máximo de noches permitidas para una reserva.
+-   **minimum_minimum_nights:** Valor mínimo observado del requisito de noches mínimas.
+-   **maximum_minimum_nights:** Valor máximo observado del requisito de noches mínimas.
+-   **minimum_maximum_nights:** Valor mínimo permitido para noches máximas.
+-   **maximum_maximum_nights:** Valor máximo permitido para noches máximas.
+-   **minimum_nights_avg_ntm:** Promedio de noches mínimas requeridas en un periodo reciente.
+-   **maximum_nights_avg_ntm:** Promedio de noches máximas permitidas.
 
----
+------------------------------------------------------------------------
 
 ### Variables de Disponibilidad
 
-- **calendar_updated:** Indica si el calendario de disponibilidad ha sido actualizado.
-- **has_availability:** Indica si el alojamiento tiene disponibilidad para reservas.
-- **availability_30:** Número de días disponibles en los próximos 30 días.
-- **availability_60:** Número de días disponibles en los próximos 60 días.
-- **availability_90:** Número de días disponibles en los próximos 90 días.
-- **availability_365:** Número de días disponibles en los próximos 365 días.
-- **calendar_last_scraped:** Fecha de la última actualización del calendario.
-- **availability_eoy:** Disponibilidad estimada al final del año.
+-   **calendar_updated:** Indica si el calendario de disponibilidad ha sido actualizado.
+-   **has_availability:** Indica si el alojamiento tiene disponibilidad para reservas.
+-   **availability_30:** Número de días disponibles en los próximos 30 días.
+-   **availability_60:** Número de días disponibles en los próximos 60 días.
+-   **availability_90:** Número de días disponibles en los próximos 90 días.
+-   **availability_365:** Número de días disponibles en los próximos 365 días.
+-   **calendar_last_scraped:** Fecha de la última actualización del calendario.
+-   **availability_eoy:** Disponibilidad estimada al final del año.
 
----
+------------------------------------------------------------------------
 
 ### Variables de Reseñas
 
-- **number_of_reviews:** Número total de reseñas recibidas por el alojamiento.
-- **number_of_reviews_ltm:** Número de reseñas recibidas en los últimos 12 meses.
-- **number_of_reviews_l30d:** Número de reseñas recibidas en los últimos 30 días.
-- **number_of_reviews_ly:** Número de reseñas recibidas durante el último año.
-- **reviews_per_month:** Promedio de reseñas recibidas por mes.
-- **first_review:** Fecha de la primera reseña registrada.
-- **last_review:** Fecha de la reseña más reciente.
+-   **number_of_reviews:** Número total de reseñas recibidas por el alojamiento.
+-   **number_of_reviews_ltm:** Número de reseñas recibidas en los últimos 12 meses.
+-   **number_of_reviews_l30d:** Número de reseñas recibidas en los últimos 30 días.
+-   **number_of_reviews_ly:** Número de reseñas recibidas durante el último año.
+-   **reviews_per_month:** Promedio de reseñas recibidas por mes.
+-   **first_review:** Fecha de la primera reseña registrada.
+-   **last_review:** Fecha de la reseña más reciente.
 
----
+------------------------------------------------------------------------
 
 ### Variables de Calificación del Alojamiento
 
-- **review_scores_rating:** Calificación promedio general del alojamiento.
-- **review_scores_accuracy:** Calificación de precisión entre la descripción y el alojamiento real.
-- **review_scores_cleanliness:** Calificación de limpieza del alojamiento.
-- **review_scores_checkin:** Calificación del proceso de check-in.
-- **review_scores_communication:** Calificación de la comunicación con el anfitrión.
-- **review_scores_location:** Calificación de la ubicación del alojamiento.
-- **review_scores_value:** Calificación de la relación calidad-precio.
+-   **review_scores_rating:** Calificación promedio general del alojamiento.
+-   **review_scores_accuracy:** Calificación de precisión entre la descripción y el alojamiento real.
+-   **review_scores_cleanliness:** Calificación de limpieza del alojamiento.
+-   **review_scores_checkin:** Calificación del proceso de check-in.
+-   **review_scores_communication:** Calificación de la comunicación con el anfitrión.
+-   **review_scores_location:** Calificación de la ubicación del alojamiento.
+-   **review_scores_value:** Calificación de la relación calidad-precio.
 
----
+------------------------------------------------------------------------
 
 ### Variables de Desempeño del Alojamiento
 
-- **estimated_occupancy_l365d:** Estimación del número de días que el alojamiento estuvo ocupado durante el último año.
-- **estimated_revenue_l365d:** Estimación de los ingresos generados por el alojamiento durante los últimos 365 días.
+-   **estimated_occupancy_l365d:** Estimación del número de días que el alojamiento estuvo ocupado durante el último año.
+-   **estimated_revenue_l365d:** Estimación de los ingresos generados por el alojamiento durante los últimos 365 días.
 
----
+------------------------------------------------------------------------
 
 ### Variables Administrativas
 
-- **license:** Número de licencia del alojamiento cuando aplica.
-- **instant_bookable:** Indica si el alojamiento permite reservas instantáneas.
-- **calculated_host_listings_count:** Número total de propiedades activas del anfitrión.
-- **calculated_host_listings_count_entire_homes:** Número de listados de casas completas del anfitrión.
-- **calculated_host_listings_count_private_rooms:** Número de habitaciones privadas del anfitrión.
-- **calculated_host_listings_count_shared_rooms:** Número de habitaciones compartidas ofrecidas por el anfitrión.
-
+-   **license:** Número de licencia del alojamiento cuando aplica.
+-   **instant_bookable:** Indica si el alojamiento permite reservas instantáneas.
+-   **calculated_host_listings_count:** Número total de propiedades activas del anfitrión.
+-   **calculated_host_listings_count_entire_homes:** Número de listados de casas completas del anfitrión.
+-   **calculated_host_listings_count_private_rooms:** Número de habitaciones privadas del anfitrión.
+-   **calculated_host_listings_count_shared_rooms:** Número de habitaciones compartidas ofrecidas por el anfitrión.
 
 ## Análisis exploratorio (Después de formatear datos)
 
@@ -389,8 +384,8 @@ Además, se observa una alta correlación entre estas variables estructurales, l
 
 Por otro lado, las variables relacionadas con reseñas y calificaciones, como number_of_reviews, reviews_per_month y review_scores_rating, muestran una relación débil con el precio, lo que indica que la popularidad o las calificaciones del alojamiento no influyen significativamente en el costo.
 
-
 ## Añadidos extra
+
 ```{r Analisis de outliers}
 boxplot(listings_clean$price,
         main="Outliers en el precio",
@@ -399,7 +394,7 @@ boxplot(listings_clean$price,
 
 El diagrama de caja del precio de los alojamientos muestra la presencia de numerosos valores atípicos (outliers) en el conjunto de datos. La mayor parte de las propiedades se concentra en un rango relativamente bajo de precios, mientras que existe un grupo reducido de alojamientos con precios extremadamente altos.
 
-Estos valores extremos superan ampliamente el rango principal de la distribución, llegando incluso a valores cercanos a 50,000 por noche, lo cual es considerablemente mayor que el precio típico observado en la mayoría de los alojamientos. 
+Estos valores extremos superan ampliamente el rango principal de la distribución, llegando incluso a valores cercanos a 50,000 por noche, lo cual es considerablemente mayor que el precio típico observado en la mayoría de los alojamientos.
 
 Los valores atípicos pueden afectar significativamente los modelos de regresión lineal, ya que estos modelos son sensibles a observaciones extremas. Por esta razón, en etapas posteriores del análisis será importante evaluar si estos valores deben ser tratados mediante transformaciones, filtrado o técnicas de regularización para evitar que distorsionen la capacidad predictiva del modelo.
 
@@ -421,15 +416,12 @@ Este resultado sugiere que el precio de los alojamientos probablemente depende d
 
 Con base en el análisis exploratorio y las correlaciones, las variables que parecen tener mayor relación con el precio son:
 
-- accommodates
-- bedrooms
-- bathrooms
-- beds
--room_type
--city
+-   accommodates
+-   bedrooms
+-   bathrooms
+-   beds -room_type -city
 
 Estas variables describen el tamaño y el tipo de propiedad, factores que intuitivamente influyen en el precio de una propiedad en Airbnb.
-
 
 ```{r Justificación modelos de regresión}
 plot(listings_clean$accommodates,
@@ -454,7 +446,7 @@ boxplot(price ~ city,
         ylab="Precio")
 ```
 
-El gráfico de dispersión muestra la relación entre la capacidad máxima de huéspedes que puede alojar una propiedad (accommodates) y el precio por noche. 
+El gráfico de dispersión muestra la relación entre la capacidad máxima de huéspedes que puede alojar una propiedad (accommodates) y el precio por noche.
 
 Se observa una ligera tendencia positiva, donde los alojamientos con mayor capacidad tienden a presentar precios más altos. Esto es consistente con la lógica del mercado, ya que propiedades que pueden alojar a más personas suelen ser más grandes o contar con más comodidades. Sin embargo, la dispersión de los puntos es considerablemente alta, lo que indica que la capacidad por sí sola no explica completamente el precio del alojamiento.
 
@@ -493,8 +485,7 @@ plot(cluster_data$accommodates,
      ylab="Precio")
 ```
 
-Se aplicó el algoritmo K-means para identificar grupos de alojamientos con características similares. Para este análisis se utilizaron variables relacionadas con el tamaño y características estructurales del alojamiento: accommodates, bedrooms, bathrooms, beds y price.
-El algoritmo se ejecutó con k = 3, generando tres grupos principales de alojamientos. La distribución de observaciones en cada grupo fue la siguiente:
+Se aplicó el algoritmo K-means para identificar grupos de alojamientos con características similares. Para este análisis se utilizaron variables relacionadas con el tamaño y características estructurales del alojamiento: accommodates, bedrooms, bathrooms, beds y price. El algoritmo se ejecutó con k = 3, generando tres grupos principales de alojamientos. La distribución de observaciones en cada grupo fue la siguiente:
 
 Cluster 1: 43,602 alojamientos
 
@@ -504,16 +495,14 @@ Cluster 3: 27,595 alojamientos
 
 A partir del gráfico que muestra la relación entre la capacidad del alojamiento y el precio, se pueden identificar patrones en los grupos generados:
 
-Cluster 1 (negro):
-Este grupo contiene principalmente alojamientos con menor capacidad y precios relativamente bajos. Corresponde a propiedades pequeñas o estándar dentro del mercado de Airbnb, que probablemente incluyen apartamentos pequeños o habitaciones privadas.
+Cluster 1 (negro): Este grupo contiene principalmente alojamientos con menor capacidad y precios relativamente bajos. Corresponde a propiedades pequeñas o estándar dentro del mercado de Airbnb, que probablemente incluyen apartamentos pequeños o habitaciones privadas.
 
-Cluster 2 (verde):
-Este grupo representa un segmento intermedio del mercado, con alojamientos que presentan características mixtas en términos de capacidad y precio. Este cluster podría corresponder a propiedades de tamaño medio o alojamientos con características particulares que los diferencian de los otros grupos.
+Cluster 2 (verde): Este grupo representa un segmento intermedio del mercado, con alojamientos que presentan características mixtas en términos de capacidad y precio. Este cluster podría corresponder a propiedades de tamaño medio o alojamientos con características particulares que los diferencian de los otros grupos.
 
-Cluster 3 (rojo):
-Este cluster agrupa alojamientos con mayor capacidad y una mayor variabilidad en los precios. Estas propiedades pueden corresponder a alojamientos más grandes, como casas completas o propiedades diseñadas para grupos grandes.
+Cluster 3 (rojo): Este cluster agrupa alojamientos con mayor capacidad y una mayor variabilidad en los precios. Estas propiedades pueden corresponder a alojamientos más grandes, como casas completas o propiedades diseñadas para grupos grandes.
 
 ## División estrenamiento / prueba
+
 ```{r}
 set.seed(123)
 
@@ -528,16 +517,16 @@ dim(test_data)
 
 El conjunto de datos fue dividido en dos subconjuntos: un conjunto de entrenamiento (70%) y un conjunto de prueba (30%). La división se realizó de forma aleatoria utilizando una semilla fija (set.seed(123)), lo cual garantiza que los resultados sean reproducibles.
 
+## Ingeniería de características:
 
-## Ingeniería de características: 
 Con el objetivo de identificar variables que puedan ser buenos predictores del precio de los alojamientos, se realizó un proceso de selección de características basado en el análisis exploratorio, el análisis de correlación y el análisis de agrupamiento realizado previamente.
 
 En primer lugar, se priorizaron variables relacionadas con las características estructurales del alojamiento, como:
 
-- accommodates
-- bedrooms
-- bathrooms
-- beds
+-   accommodates
+-   bedrooms
+-   bathrooms
+-   beds
 
 Estas variables describen el tamaño y la capacidad del alojamiento. En el análisis exploratorio se observó que estas características presentan una relación positiva con el precio, ya que propiedades más grandes o con mayor capacidad tienden a tener precios más elevados. Además, en el análisis de correlación se identificó que estas variables mantienen relaciones positivas con la variable objetivo.
 
@@ -553,24 +542,22 @@ En conjunto, las variables seleccionadas permiten capturar información sobre el
 modelo_simple <- lm(price ~ accommodates, data=train_data)
 summary(modelo_simple)
 
-plot(train_data$accommodates,
-     train_data$price,
+plot(price ~ accommodates, data=train_data,
      pch=20,
      col="gray",
-     main="Regresión lineal simple")
+     main="Regresión lineal: Precio vs Capacidad",
+     xlab="Número de huéspedes (accommodates)",
+     ylab="Precio")
 
 abline(modelo_simple, col="red", lwd=2)
 
 par(mfrow=c(2,2))
 plot(modelo_simple)
 ```
-Para comenzar el análisis predictivo, se construyó un modelo de regresión lineal simple utilizando la variable accommodates como predictor del precio de los alojamientos.
-El modelo estimado tiene la siguiente forma:
-price = 49.8 + 144.5 * accommodates
-Según el modelo, cada huésped adicional que puede alojar la propiedad incrementa el precio esperado en aproximadamente 144.5 unidades monetarias.
 
-Los resultados del modelo muestran que el coeficiente asociado a la variable accommodates es estadísticamente significativo, con un p-valor menor a 2e-16. Esto indica que existe evidencia estadística de que la capacidad del alojamiento tiene una relación con el precio.
-Asimismo, el estadístico F del modelo también es significativo, lo que sugiere que el modelo tiene capacidad explicativa mayor que un modelo sin predictores.
+Para comenzar el análisis predictivo, se construyó un modelo de regresión lineal simple utilizando la variable accommodates como predictor del precio de los alojamientos. El modelo estimado tiene la siguiente forma: price = 49.8 + 144.5 \* accommodates Según el modelo, cada huésped adicional que puede alojar la propiedad incrementa el precio esperado en aproximadamente 144.5 unidades monetarias.
+
+Los resultados del modelo muestran que el coeficiente asociado a la variable accommodates es estadísticamente significativo, con un p-valor menor a 2e-16. Esto indica que existe evidencia estadística de que la capacidad del alojamiento tiene una relación con el precio. Asimismo, el estadístico F del modelo también es significativo, lo que sugiere que el modelo tiene capacidad explicativa mayor que un modelo sin predictores.
 
 Por otro lado, el modelo presenta un R² de aproximadamente 0.01. Por lo que, aunque existe una relación entre la capacidad del alojamiento y el precio, esta variable por sí sola no es suficiente para explicar adecuadamente el precio de las propiedades. Es probable que otros factores, como la ubicación, el tipo de alojamiento o las características del anfitrión, tengan un papel importante en la determinación del precio.
 
@@ -585,3 +572,98 @@ En el gráfico Scale-Location se observa que la variabilidad de los residuos aum
 Finalmente, el gráfico Residuals vs Leverage muestra algunas observaciones con mayor influencia en el modelo, lo que sugiere que ciertos valores extremos podrían estar afectando la estimación de la regresión.
 
 En conjunto, la capacidad del alojamiento tiene una relación positiva con el precio, pero su capacidad explicativa es limitada.
+
+```{r modelo multivariable}
+numeric_vars <- listings_clean[, sapply(listings_clean, is.numeric)]
+predictors <- numeric_vars[, !(names(numeric_vars) %in% c("price"))]
+
+modelo_multiple <- lm(price ~ ., data = cbind(price = listings_clean$price, predictors))
+
+summary(modelo_multiple)
+
+```
+
+```{r predecir precio}
+predicciones <- predict(modelo_multiple, newdata = test_data)
+
+head(data.frame(
+  Precio_real = test_data$price,
+  Precio_predicho = predicciones
+))
+
+rmse <- sqrt(mean((test_data$price - predicciones)^2))
+rmse
+
+plot(test_data$price,
+     predicciones,
+     pch=20,
+     col="blue",
+     xlab="Precio real",
+     ylab="Precio predicho",
+     main="Precio real vs Precio predicho")
+
+abline(0,1,col="red", lwd=2)
+```
+
+Al comparar los precios reales con los precios predichos por el modelo, se observa que aunque el modelo logra capturar parcialmente la variación del precio, existen errores importantes en algunas predicciones. En ciertos casos el modelo subestima o sobreestima significativamente el valor real del alojamiento, e incluso genera predicciones negativas, lo cual no es realista para esta variable. Esto sugiere que, aunque el modelo explica parte del comportamiento del precio, aún existen factores adicionales que influyen en su determinación y que no están completamente capturados por las variables numéricas utilizadas.
+
+```{r multicolinealidad}
+vif(modelo_multiple)
+
+
+train_pred <- predict(modelo_multiple, train_data)
+test_pred <- predict(modelo_multiple, test_data)
+
+train_rmse <- sqrt(mean((train_data$price - train_pred)^2))
+test_rmse <- sqrt(mean((test_data$price - test_pred)^2))
+
+train_rmse
+test_rmse
+```
+
+Para evaluar la presencia de sobreajuste se comparó el error cuadrático medio en los conjuntos de entrenamiento y prueba. El RMSE del conjunto de entrenamiento fue aproximadamente 2962, mientras que el del conjunto de prueba fue de aproximadamente 3012. Debido a que ambos valores son muy similares, no se observa evidencia clara de sobreajuste en el modelo, lo que indica que este mantiene una capacidad de generalización relativamente estable. Sin embargo, el análisis de multicolinealidad mostró que varias variables presentan alta correlación entre sí, lo que puede afectar la estabilidad de los coeficientes y la interpretabilidad del modelo.
+
+```{r nuevo modelo}
+modelo_reducido <- lm(
+price ~ accommodates +
+bathrooms +
+bedrooms +
+beds +
+number_of_reviews +
+reviews_per_month +
+availability_365 +
+estimated_occupancy_l365d,
+data=train_data)
+
+summary(modelo_reducido)
+
+par(mfrow=c(2,2))
+plot(modelo_reducido)
+
+```
+
+El análisis de residuos muestra que el modelo presenta algunas limitaciones. Los gráficos indican la presencia de valores atípicos, falta de normalidad en los residuos y heterocedasticidad. Además, se identifican algunas observaciones influyentes que pueden afectar el ajuste del modelo. Estos resultados sugieren que el modelo de regresión lineal no captura completamente la relación entre las variables y el precio de las propiedades.
+
+```{r predecir nuevo modelo}
+pred <- predict(modelo_reducido, test_data)
+
+plot(test_data$price,
+     pred,
+     pch=20,
+     col="blue",
+     xlab="Precio real",
+     ylab="Precio predicho",
+     main="Precio real vs Precio predicho")
+
+abline(0,1,col="red", lwd=2)
+
+
+comparacion <- data.frame(
+  Precio_real = test_data$price,
+  Precio_predicho = pred
+)
+
+head(comparacion)
+```
+
+Al comparar el precio real con el precio predicho por el modelo, se observa que algunas predicciones presentan errores significativos. En ciertos casos el modelo genera valores negativos o predicciones muy superiores al precio real. Esto indica que el modelo no captura completamente la relación entre las variables predictoras y el precio. Esta situación puede explicarse por la presencia de valores extremos en la variable precio, así como por la baja capacidad explicativa del modelo, reflejada en un valor de R² relativamente bajo. Por lo tanto, aunque el modelo identifica algunas tendencias generales, su capacidad predictiva es limitada.

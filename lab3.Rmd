@@ -722,40 +722,92 @@ Al comparar los resultados iniciales de ambos modelos se observa que el modelo L
 
 #Inciso 12 Eficiencia de modelos
 ```{r}
-resultados <- data.frame(
-Modelo = c("Ridge","Lasso"),
-RMSE = c(ridge_rmse, lasso_rmse)
+# ==============================
+# Predicciones en el conjunto de prueba
+# ==============================
+
+# modelo simple
+pred_simple <- predict(modelo_simple, newdata = test_data)
+
+# modelo múltiple
+pred_multiple <- predict(modelo_multiple, newdata = test_data)
+
+# modelo reducido
+pred_reducido <- predict(modelo_reducido, newdata = test_data)
+
+# ridge
+pred_ridge <- as.numeric(predict(ridge_model, s = "lambda.min", newx = x_test))
+
+# lasso
+pred_lasso <- as.numeric(predict(lasso_model, s = "lambda.min", newx = x_test))
+
+
+# ==============================
+# Cálculo de RMSE
+# ==============================
+
+rmse <- function(real, pred){
+  sqrt(mean((real - pred)^2))
+}
+
+rmse_simple <- rmse(test_data$price, pred_simple)
+rmse_multiple <- rmse(test_data$price, pred_multiple)
+rmse_reducido <- rmse(test_data$price, pred_reducido)
+rmse_ridge <- rmse(test_data$price, pred_ridge)
+rmse_lasso <- rmse(test_data$price, pred_lasso)
+
+
+# ==============================
+# Tabla comparativa de modelos
+# ==============================
+
+resultados_modelos <- data.frame(
+Modelo = c(
+"Regresión Lineal Simple",
+"Regresión Lineal Múltiple",
+"Modelo Reducido",
+"Ridge",
+"Lasso"
+),
+RMSE = c(
+rmse_simple,
+rmse_multiple,
+rmse_reducido,
+rmse_ridge,
+rmse_lasso
+)
 )
 
-resultados
+resultados_modelos
 ```
-Para evaluar la eficiencia de los modelos se utilizó el conjunto de prueba, el cual contiene observaciones que no fueron utilizadas durante el entrenamiento. Esto permite evaluar qué tan bien el modelo puede generalizar a datos nuevos.
+Para evaluar el desempeño de los modelos desarrollados se utilizó el conjunto de prueba, el cual contiene observaciones que no fueron utilizadas durante el proceso de entrenamiento. Esto permite medir qué tan bien los modelos pueden generalizar a datos nuevos.
 
-La métrica utilizada para medir la calidad de las predicciones fue el Root Mean Squared Error (RMSE). Esta métrica mide la magnitud promedio del error entre los valores reales y los valores predichos por el modelo. Valores más bajos de RMSE indican un mejor desempeño del modelo.
+La métrica utilizada para evaluar la calidad de las predicciones fue el Root Mean Squared Error (RMSE). Esta métrica mide la diferencia promedio entre los valores reales y los valores predichos por el modelo, penalizando con mayor peso los errores grandes. Un valor menor de RMSE indica que las predicciones del modelo se encuentran más cerca de los valores reales.
 
-Los resultados obtenidos fueron:
+Al analizar los resultados se observa que el modelo de regresión lineal múltiple obtuvo el menor RMSE (3011.837), lo que indica que fue el modelo que realizó las predicciones más precisas sobre el conjunto de prueba. Muy cercano a este resultado se encuentra el modelo Lasso, con un RMSE de 3023.683.
 
-Ridge RMSE: 3304.461
-
-Lasso RMSE: 3023.683
-
-Estos resultados indican que el modelo Lasso presenta un menor error de predicción en comparación con Ridge. Esto significa que las predicciones generadas por el modelo Lasso están, en promedio, más cerca de los valores reales del precio de las viviendas.
-
-En términos de eficiencia, ambos modelos logran capturar parte de la relación entre las variables predictoras y el precio de las propiedades, pero el modelo Lasso demuestra una mayor capacidad de generalización en el conjunto de prueba.
+Por otro lado, el modelo de regresión lineal simple y el modelo reducido presentan valores de RMSE considerablemente más altos, lo que indica que sus predicciones son menos precisas. Esto puede explicarse porque estos modelos utilizan menos información para predecir el precio de las viviendas.
 
 #Inciso 13 Discusión
 ```{r}
-ggplot(resultados, aes(x = Modelo, y = RMSE, fill = Modelo)) +
+library(ggplot2)
+
+ggplot(resultados_modelos, aes(x = reorder(Modelo, RMSE), y = RMSE, fill = Modelo)) +
   geom_bar(stat = "identity") +
+  coord_flip() +
   theme_minimal() +
-  ggtitle("Comparación del error RMSE entre modelos")
+  labs(
+    title = "Comparación del RMSE entre modelos",
+    x = "Modelo",
+    y = "RMSE"
+  )
 ```
-Para analizar la efectividad de los modelos se compararon los resultados obtenidos por los modelos de Ridge y Lasso utilizando el conjunto de prueba.
+Durante el desarrollo del laboratorio se construyeron distintos modelos con el objetivo de predecir el precio de las viviendas a partir de las características disponibles en el conjunto de datos. Estos modelos incluyeron regresión lineal simple, regresión lineal múltiple, un modelo reducido con variables seleccionadas y modelos con técnicas de regularización (Ridge y Lasso).
 
-Ambos modelos utilizan técnicas de regularización que ayudan a reducir la complejidad del modelo y evitar problemas de sobreajuste. Sin embargo, cada técnica aplica la penalización de forma diferente.
+El modelo de regresión lineal simple utilizó únicamente una variable predictora, lo cual permitió observar una relación inicial con el precio de las viviendas. Sin embargo, debido a que el precio depende de múltiples factores, este modelo presentó un desempeño limitado y obtuvo el mayor valor de RMSE.
 
-El modelo Ridge reduce la magnitud de los coeficientes pero mantiene todas las variables en el modelo, mientras que Lasso puede eliminar automáticamente variables menos relevantes al reducir algunos coeficientes a cero. Esta característica permite que Lasso genere modelos más simples y, en muchos casos, con mejor capacidad predictiva.
+El modelo de regresión lineal múltiple incorporó todas las variables numéricas disponibles, lo que permitió capturar una mayor cantidad de información sobre las características de las propiedades. Como resultado, este modelo logró el mejor desempeño predictivo, obteniendo el menor RMSE entre todos los modelos evaluados.
 
-En los resultados obtenidos se observa que el modelo Lasso obtuvo el menor RMSE (3023.683), mientras que el modelo Ridge obtuvo un RMSE de 3304.461. Esto indica que el modelo Lasso logra predecir con mayor precisión el precio de las viviendas en comparación con Ridge.
+El modelo reducido, que utiliza únicamente algunas variables seleccionadas, presentó un desempeño inferior al modelo múltiple. Esto sugiere que eliminar algunas variables pudo haber reducido la cantidad de información disponible para realizar las predicciones.
 
-Por lo tanto, considerando la métrica de evaluación utilizada y el desempeño observado en el conjunto de prueba, el modelo Lasso resulta ser el modelo más efectivo para predecir el precio de las viviendas en este conjunto de datos, ya que presenta el menor error de predicción y una mejor capacidad de generalización.
+En cuanto a los modelos con regularización, el modelo Ridge logró reducir la magnitud de los coeficientes para controlar la complejidad del modelo, mientras que el modelo Lasso permitió reducir el impacto de variables menos relevantes. Aunque estos modelos ayudan a mejorar la estabilidad del modelo y a reducir problemas de multicolinealidad, en este caso sus resultados no superaron al modelo de regresión lineal múltiple.
